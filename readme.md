@@ -13,6 +13,7 @@ PostgreSQL: 在不使用Hadoop时，可以做简单的数据分析，对Json支�
 TODO
 
 ## 工程结构
+```
 └─src
     ├─main
     │  ├─java
@@ -35,3 +36,4 @@ TODO
             └─com
                 └─xu
                     └─axis
+```
