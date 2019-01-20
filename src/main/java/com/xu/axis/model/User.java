@@ -24,10 +24,6 @@ public class User {
    */
   private String userType;
   /**.
-   * 更新时间
-   */
-  private String updateTime;
-  /**.
    * 更新用户
    */
   private String updateUser;
