@@ -1,65 +1,53 @@
 package com.xu.axis.controller;
 
-import com.xu.axis.service.LoginService;
+
+import com.xu.axis.pojo.VueLoginInfo;
+import com.xu.axis.result.Result;
+import com.xu.axis.result.ResultFactory;
 import com.xu.axis.service.UserService;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
+import java.util.Objects;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 
 @Controller
-@RequestMapping(value = "/login")
 public class LoginController {
 
-  private static final String LOGIN_ERROR = "用户名或密码错误";
-
   @Autowired
-  protected UserService userService;
+  private UserService userService;
 
+  @CrossOrigin
+  @RequestMapping(value = "/login", method = RequestMethod.POST,
+      produces = "application/json ; charset=UTF-8")
+  @ResponseBody
+  public Result login(@Valid @RequestBody VueLoginInfo loginInfo, BindingResult bind) {
+    if (null == userService.getUserByName(loginInfo.getUsername())) {
+      String message = "登陆失败";
 
-  @Resource
-  private LoginService loginService;
-
-  @RequestMapping(value = "/readyLogin.do", method = RequestMethod.GET)
-  public String index(HttpSession session) {
-
-    session.removeAttribute("username");
-
-    session.removeAttribute("password");
-
-    session.removeAttribute("type");
-
-    session.removeAttribute("error");
-
-    return "login/login";
-  }
-
-  @RequestMapping(value = "/logOut.do", method = RequestMethod.GET)
-  public String logOut(HttpSession session) {
-    session.removeAttribute("username");
-
-    session.removeAttribute("password");
-
-    session.removeAttribute("type");
-
-    session.removeAttribute("error");
-
-    return "login/logOut";
-  }
-
-  @RequestMapping(value = "login.do", method = RequestMethod.POST)
-  public void login(@RequestParam String userName, @RequestParam String password,
-      HttpSession session) {
-    if (loginService.loginValidate(userName, password)) {
-      session.setAttribute("username", userName);
-      session.setAttribute("type", userService.getUserByName(userName).getUserType());
+      return ResultFactory.buildFailResult(message);
     } else {
-      session.setAttribute("error", LOGIN_ERROR);
+      String username = userService.getUserByName(loginInfo.getUsername()).getUserName();
+      String password = userService.getUserByName(loginInfo.getUsername()).getPassword();
+
+      if (bind.hasErrors()) {
+        String message = String.format("登陆失败，[%s]", bind.getFieldError().getDefaultMessage());
+        return ResultFactory.buildFailResult(message);
+      }
+      if (!Objects.equals(username, loginInfo.getUsername()) && Objects
+          .equals(password, loginInfo.getPassword())) {
+        return ResultFactory.buildSuccessResult("成功");
+      }
+      String message = "登陆失败，详细信息[用户名、密码信息不正确]。";
+      return ResultFactory.buildFailResult(message);
     }
+
+
   }
-
-
 }

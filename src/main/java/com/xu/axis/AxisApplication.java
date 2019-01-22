@@ -11,6 +11,5 @@ public class AxisApplication {
   public static void main(String[] args) {
     SpringApplication.run(AxisApplication.class, args);
   }
-
 }
 
