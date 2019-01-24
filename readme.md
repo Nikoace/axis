@@ -1,5 +1,7 @@
 # 学生饭卡模拟消费数据分析
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Nikoace_axis&metric=alert_status)](https://sonarcloud.io/dashboard?id=Nikoace_axis)
+
 ## 使用框架
 - Spring boot
 - Mybatis
